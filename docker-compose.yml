@@ -1,32 +1,49 @@
 services:
-  database:
+  db:
     image: mysql:8.0
-    container_name: enterprise-db
+    container_name: ccm101-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: ${MYSQL_USER:-wordpress_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ccm101-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   wordpress:
     image: wordpress:latest
-    container_name: enterprise-wordpress
+    container_name: ccm101-wordpres
     restart: unless-stopped
     depends_on:
-      - database
-    ports:
-      - "${WORDPRESS_PORT}:80"
+      db:
+        condition: service_healthy
     environment:
-      WORDPRESS_DB_HOST: database:3306
-      WORDPRESS_DB_USER: ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
-      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: ${MYSQL_USER:-wordpress_user}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+    ports:
+      - "80:80"
     volumes:
       - wordpress_data:/var/www/html
+    networks:
+      - ccm101-network
+
+networks:
+  ccm101-network:
+    driver: bridge
 
 volumes:
-  db_data:
+  mysql_data:
+    name: ccm101-project_mysql_data
   wordpress_data:
+    name: ccm101-project_wordpress_data
