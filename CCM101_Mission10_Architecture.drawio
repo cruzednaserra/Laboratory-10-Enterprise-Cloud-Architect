@@ -1,0 +1,94 @@
+<mxfile host="app.diagrams.net" agent="ChatGPT">
+  <diagram id="ccm101-architecture" name="CCM101 Architecture">
+    <mxGraphModel dx="880" dy="447" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#17365D;" value="CCM101 — Mission 10: Enterprise Cloud Architecture" vertex="1">
+          <mxGeometry height="40" width="810" x="180" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="host" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=16;fontStyle=1;" value="Windows 11 Host&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Host browser / PowerShell SSH&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="350" x="410" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="vbox" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=16;fontStyle=1;" value="VirtualBox — Type 2 Hypervisor" vertex="1">
+          <mxGeometry height="55" width="350" x="410" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="nat" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=13;fontStyle=1;" value="Adapter 1 — NAT&lt;br&gt;Internet access" vertex="1">
+          <mxGeometry height="60" width="230" x="60" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="hostonly" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=13;fontStyle=1;" value="Adapter 2 — Host-only&lt;br&gt;Private link to Windows host" vertex="1">
+          <mxGeometry height="60" width="230" x="880" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="ubuntu" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=15;fontStyle=1;" value="Ubuntu Server VM&lt;br&gt;Hostname: ccm101-server&lt;br&gt;Host-only IP: 192.168.56.101 (example — use actual IP)" vertex="1">
+          <mxGeometry height="80" width="470" x="350" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="ufw" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=14;fontStyle=1;" value="UFW Firewall&lt;br&gt;Default deny incoming&lt;br&gt;Allow TCP 22 (SSH) and TCP 80 (HTTP)" vertex="1">
+          <mxGeometry height="75" width="470" x="350" y="395" as="geometry" />
+        </mxCell>
+        <mxCell id="docker" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=15;fontStyle=1;" value="Docker Engine&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Container runtime&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="470" x="350" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="compose" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=15;fontStyle=1;" value="Docker Compose&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;docker-compose.yml&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="470" x="350" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="wordpress" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=14;fontStyle=1;" value="WordPress&lt;br&gt;Web application&lt;br&gt;Published port: 80" vertex="1">
+          <mxGeometry height="75" width="250" x="180" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="mysql" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=14;fontStyle=1;" value="MySQL 8.0&lt;br&gt;Database service&lt;br&gt;Internal port: 3306" vertex="1">
+          <mxGeometry height="75" width="250" x="530" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="volumes" parent="1" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=13;fontStyle=1;" value="Persistent named volumes&lt;br&gt;wordpress_data → /var/www/html&lt;br&gt;mysql_data → /var/lib/mysql" vertex="1">
+          <mxGeometry height="95" width="270" x="850" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="automation" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=13;" value="Operations automation&lt;br&gt;automation-script.sh — database backup&lt;br&gt;Cron — daily at 02:00&lt;br&gt;Backups stored in ~/ccm101-project/backups/" vertex="1">
+          <mxGeometry height="105" width="230" x="60" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="host" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" target="vbox">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="vbox" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="ubuntu" value="runs VM">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="nat" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#D6B656;" target="ubuntu" value="NAT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="hostonly" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#D6B656;" target="ubuntu" value="private host link">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="ubuntu" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" target="ufw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="ufw" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" target="docker">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="docker" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" target="compose">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="compose" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="wordpress">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="compose" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="mysql">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="wordpress" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#008000;fontSize=11;" target="mysql" value="WordPress connects to db:3306 on the Compose network">
+          <mxGeometry relative="1" y="38" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="wordpress" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D6B656;fontSize=11;" target="volumes" value="stores site files">
+          <mxGeometry relative="1" x="0.1905" y="37" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="mysql" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D6B656;fontSize=11;" target="volumes" value="stores database files">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="automation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#666666;fontSize=11;" target="mysql" value="backup + schedule">
+          <mxGeometry relative="1" x="-0.3175" y="-2" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
