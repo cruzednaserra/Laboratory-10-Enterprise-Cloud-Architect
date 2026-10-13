@@ -1,20 +1,27 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
-PROJECT_DIR="$HOME/Laboratory-10-Enterprise-Cloud-Architect"
-BACKUP_DIR="$HOME/backups"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+BACKUP_DIR="$SCRIPT_DIR/backups"
+TIMESTAMP="$(date +%Y-%m-%d_%H-%M-%S)"
+BACKUP_FILE="$BACKUP_DIR/wordpress-db-$TIMESTAMP.sql"
 
 mkdir -p "$BACKUP_DIR"
 
-DATE=$(date +"%Y-%m-%d_%H-%M-%S")
-
-docker compose -f "$PROJECT_DIR/docker-compose.yml" exec -T database \
-  sh -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' \
-  > "$BACKUP_DIR/database_$DATE.sql"
-
-if [ $? -eq 0 ]; then
-    echo "Backup completed successfully:"
-    echo "$BACKUP_DIR/database_$DATE.sql"
-else
-    echo "Backup failed."
-    exit 1
+if ! docker compose -f "$SCRIPT_DIR/docker-compose.yml" exec -T db sh -c \
+  'exec mysqldump --single-transaction -u root -p"$MYSQL_ROOT_PASSWORD" wordpress' \
+  > "$BACKUP_FILE"; then
+  rm -f "$BACKUP_FILE"
+  echo "ERROR: Database backup failed." >&2
+  exit 1
 fi
+
+if [[ ! -s "$BACKUP_FILE" ]]; then
+  rm -f "$BACKUP_FILE"
+  echo "ERROR: Backup file is empty." >&2
+  exit 1
+fi
+
+find "$BACKUP_DIR" -type f -name "wordpress-db-*.sql" -mtime +7 -delete
+
+echo "Backup completed: $BACKUP_FILE"
