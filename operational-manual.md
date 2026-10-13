@@ -1,66 +1,66 @@
-# Operational Manual
+# Operational Manual — CCM101 Mission 10
 
-## 1. Start the Services
+## Project Overview
 
-Open Ubuntu and go to the project directory:
+This project deploys WordPress and MySQL using Docker Compose on an Ubuntu Server virtual machine.
 
-cd ~/Laboratory-10-Enterprise-Cloud-Architect
+## System Architecture
 
-Start the containers:
+Windows 11 → VirtualBox → Ubuntu Server → UFW → Docker Engine → Docker Compose → WordPress and MySQL.
 
-docker compose up -d
+## Connect Through PowerShell
 
-## 2. Check the Services
+Replace the IP address if your VM uses a different address.
 
-Run:
+```powershell
+ssh cloudadmin@192.168.56.101
+```
 
-docker compose ps
+## Check Docker
 
-The services should show as running:
+```bash
+sudo docker --version
+sudo docker compose version
+sudo docker compose ps
+```
 
-- enterprise-web
-- enterprise-db
+## Start the Application
 
-## 3. Test the Web Server
+```bash
+cd ~/ccm101-project
+sudo docker compose up -d
+sudo docker compose ps
+```
 
-Run:
+## Check Logs
 
-curl http://localhost:8080
+```bash
+sudo docker compose logs --tail=100 db
+sudo docker compose logs --tail=100 wordpress
+```
 
-The Nginx welcome page should be displayed.
+## Test Persistent Storage
 
-## 4. Stop the Services
+Stop containers without deleting volumes:
 
-To stop the containers:
+```bash
+sudo docker compose down
+sudo docker compose up -d
+```
 
-docker compose down
+Check if your WordPress pages and database data remain available.
 
-## 5. Start Again
+## Run a Database Backup
 
-To start the services again:
+```bash
+chmod +x automation-script.sh
+sudo ./automation-script.sh
+ls -lh backups/
+```
 
-docker compose up -d
+## Important Notes
 
-## 6. Troubleshooting
-
-If a container is not running, check its status:
-
-docker compose ps
-
-View the logs using:
-
-docker compose logs
-
-For a specific service:
-
-docker compose logs web
-
-or:
-
-docker compose logs database
-
-## 7. Important Notes
-
-Do not delete the Docker volume if the database data is still needed.
-
-The web service uses port 8080 on the Ubuntu server.
+- Do not publish database passwords.
+- Do not expose MySQL port 3306 unnecessarily.
+- Avoid `docker compose down -v` when you need to preserve data.
+- Use the actual IP address configured on your VM.
